@@ -13,3 +13,13 @@ CREATE TABLE `wallet`.`user_confirm` (
   `expire_dt` DATETIME NOT NULL,
   PRIMARY KEY (`user_idx`),
   INDEX `IDX_CODE` (`code` ASC));
+
+CREATE TABLE `wallet`.`account` (
+  `idx` BIGINT NOT NULL AUTO_INCREMENT,
+  `user_idx` BIGINT NOT NULL,
+  `address` VARCHAR(42) NOT NULL,
+  `priv_key` VARCHAR(33) NOT NULL,
+  `encrypted` VARCHAR(64) NOT NULL,
+  `create_dt` DATETIME NOT NULL,
+  PRIMARY KEY (`idx`),
+  INDEX `IDX_1` (`user_idx` ASC, `create_dt` ASC));

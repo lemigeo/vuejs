@@ -41,6 +41,18 @@ const UserConfirm = sequelize.define('user_confirm', {
     expire_dt: Sequelize.DATE,
 });
 
+const Account = sequelize.define('account', {
+    idx:  {
+        type: Sequelize.BIGINT,
+        primaryKey: true,
+        autoIncrement: true },
+    user_idx: Sequelize.BIGINT,
+    address: Sequelize.STRING(42),
+    priv_key: Sequelize.STRING(33),
+    encrypted: Sequelize.STRING(64),
+    create_dt: Sequelize.DATE,
+});
+
 module.exports.createUser = async(info) => {
     try{
         let result = await User.build(info).save();
@@ -66,6 +78,21 @@ module.exports.getUser = async(email) => {
         return null;
     }
 };
+
+module.exports.getUserByIdx = async(idx) => {
+    try{
+        let result = await User.findOne({
+            where: {
+                idx: idx,
+            }
+        });
+        return result.dataValues;
+    }
+    catch(err) {
+        console.log(err);
+        return null;
+    }
+}
 
 const updateUserQuery = 'update user set confirm = true, confirm_dt = :now where idx = :idx and confirm = false';
 module.exports.updateUser = async(idx) => {
@@ -108,4 +135,31 @@ module.exports.getUserConfirmByCode = async(userIdx, code) => {
         console.log(err);
         return null;
     }
-}
+};
+
+module.exports.getAccounts = async(userIdx) => {
+    try {
+        let result = await Account.findAll({
+            attributes: ['user_idx', 'address', 'create_dt'],
+            where: {
+                user_idx: userIdx
+              }
+        });
+        return result.dataValues;
+    }
+    catch(err) {
+        console.log(err);
+        return null;
+    }
+};
+
+module.exports.createAccount = async(info) => {
+    try{
+        let result = await Account.build(info).save();
+        return result.dataValues;
+    }
+    catch(err) {
+        console.log(err);
+        return null;
+    }
+};

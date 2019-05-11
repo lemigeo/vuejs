@@ -1,6 +1,8 @@
 const util = require('util');
 const Config = require('./config');
 const Repository = require('./repository');
+const Web3 = require('web3');
+const web3 = new Web3(new Web3.providers.HttpProvider(Config.node.host));
 
 module.exports.signup = async(email, pw) => {
     let encrypted = await this.encrypt(email, pw);
@@ -50,6 +52,37 @@ module.exports.login = async(email, pw) => {
     else {
         return null;
     }
+}
+
+module.exports.createAccount = async(token, pw) => {
+    let idx = await this.getUserIdx(token);
+    let user = await Repository.getUserByIdx(idx);
+    let encrypted = await this.encrypt(user.email, pw);
+    if(encrypted === user.encrypted) {
+        let account = web3.eth.accounts.create();
+        let encryptedKey = await this.encrypt(account.privateKey.substring(0, 33), pw);
+        let result = await Repository.createAccount({
+            user_idx: idx,
+            address: account.address,
+            priv_key: account.privateKey.substring(33, 66),
+            encrypted: encryptedKey,
+            create_dt: new Date(),
+        });
+        return {
+            user_idx: result.user_idx,
+            address: result.address,
+            create_dt: result.create_dt,
+        }
+    }
+    else {
+        return null;
+    }
+}
+
+module.exports.getAccounts = async(token) => {
+    let idx = await this.getUserIdx(token);
+    let accounts = await Repository.getAccounts(idx);
+    console.log(accounts);
 }
 
 const nodemailer = require("nodemailer");

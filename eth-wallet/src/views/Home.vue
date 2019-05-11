@@ -1,11 +1,16 @@
 <template>
   <div class="container">
     <Nav />
-    <div class="top">
-      <div class="container">
-        <button class="button"> Add </button>
+    <form>
+      <div class="card p-2">  
+        <div class="input-group">
+          <input type="password" ref="pw" class="form-control" placeholder="Password" required autofocus />
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="submit" v-on:click.prevent="create"> Create a new account </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </form>
     <div class="card">
       <ul>
         <li class="list">
@@ -40,7 +45,9 @@
 </template>
 
 <script>
+import api from  '../api';
 import Nav from '../components/Nav.vue'
+import { mapState, mapActions } from 'vuex';
 
 export default {
   name: "home",
@@ -48,6 +55,33 @@ export default {
   },
   components: {
     Nav
+  },
+  mounted: function() {
+    if(!api.loggedIn()) {
+      this.$router.push({name: 'index'});
+    }
+  },
+  computed: {
+    ...mapState([
+      'session',
+    ]),
+  },
+  methods: {
+    async create(event) {
+      if(this.$refs.pw.value.length <= 0) {
+        alert('password not found');
+        return false;
+      }
+      let resp = await api.createAccount(this.$refs.pw.value);
+      // if(resp !== null) {
+      //   if(!resp.success) {
+      //     alert('');
+      //   }
+      //   else {
+      //     alert('');
+      //   }
+      // }
+    },
   }
 };
 </script>

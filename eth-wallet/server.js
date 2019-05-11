@@ -71,10 +71,16 @@ app.get('/wallet', async(req, res) => {
 });
 
 app.post('/wallet/create', async(req, res) => {
-    console.log(req.body.token);
-    res.status(200).send({
-        result: false
-    });
+    let account = await Service.createAccount(req.body.token, req.body.pw)
+    console.log(account);
+    if(account !== null) {
+        Response.success(res, {
+            account: account
+        });
+    }
+    else {
+        Response.fail(res, 'failed to create a new account');
+    }
 });
 
 app.get('/account/:address', async(req, res) => {

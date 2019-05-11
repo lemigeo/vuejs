@@ -37,7 +37,16 @@ const api = {
       return null;
     }
   },
-
+  async createAccount(pw) {
+    try {
+      let res = await http.post('wallet/create', { token: this.getToken(), pw: pw });
+      console.log(res);
+    }
+    catch(err) {
+      console.log(err);
+      return null;
+    }
+  },
   getToken() {
     return $cookies.get('token');
   },
