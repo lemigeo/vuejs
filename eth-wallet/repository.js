@@ -140,12 +140,16 @@ module.exports.getUserConfirmByCode = async(userIdx, code) => {
 module.exports.getAccounts = async(userIdx) => {
     try {
         let result = await Account.findAll({
-            attributes: ['user_idx', 'address', 'create_dt'],
+            attributes: ['idx', 'user_idx', 'address', 'create_dt'],
             where: {
                 user_idx: userIdx
               }
         });
-        return result.dataValues;
+        let accounts = [];
+        for(const item of result) {
+            accounts.push(item.dataValues);
+        }
+        return accounts;
     }
     catch(err) {
         console.log(err);

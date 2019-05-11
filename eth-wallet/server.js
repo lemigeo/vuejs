@@ -63,16 +63,21 @@ app.post('/login', async(req, res) => {
     }
 });
 
-app.get('/wallet', async(req, res) => {
-    console.log(req.body.token);
-    res.status(200).send({
-        result: false
-    });
+app.post('/wallet', async(req, res) => {
+    let accounts = await Service.getAccounts(req.body.token);
+    console.log(accounts);
+    if(accounts !== null) {
+        Response.success(res, {
+            accounts: accounts
+        });
+    }
+    else {
+        Response.fail(res, 'failed to get user accounts');
+    }
 });
 
 app.post('/wallet/create', async(req, res) => {
     let account = await Service.createAccount(req.body.token, req.body.pw)
-    console.log(account);
     if(account !== null) {
         Response.success(res, {
             account: account

@@ -37,10 +37,26 @@ const api = {
       return null;
     }
   },
+  async getAccounts() {
+    try{
+      let res = await http.post('wallet', { token: this.getToken() });
+      if(res.data.success) {
+        return res.data.result.accounts;
+      }
+      else {
+        return null;
+      }
+      
+    }
+    catch(err) {
+      console.log(err);
+      return null;
+    }
+  },
   async createAccount(pw) {
     try {
       let res = await http.post('wallet/create', { token: this.getToken(), pw: pw });
-      console.log(res);
+      return res.data.result;
     }
     catch(err) {
       console.log(err);

@@ -82,7 +82,7 @@ module.exports.createAccount = async(token, pw) => {
 module.exports.getAccounts = async(token) => {
     let idx = await this.getUserIdx(token);
     let accounts = await Repository.getAccounts(idx);
-    console.log(accounts);
+    return accounts;
 }
 
 const nodemailer = require("nodemailer");
